@@ -3,6 +3,7 @@
     "pages/index/index",
     "pages/strategy/strategy"
   ],
+  "lazyCodeLoading": "requiredComponents",
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#1a1a2e",
