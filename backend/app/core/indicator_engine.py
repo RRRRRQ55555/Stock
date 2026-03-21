@@ -770,7 +770,7 @@ class IndicatorEngine:
         
         # 计算均线状态
         ma_prices_short = prices[-5:-1]  # 4个价格用于5日均线
-        ma_prices_long = prices[-20:-1]  # 19个价格用于20日均线
+        ma_prices_long = prices[-10:-1]  # 9个价格用于10日均线
         
         ma_state = MAState(
             prices_short=ma_prices_short,
