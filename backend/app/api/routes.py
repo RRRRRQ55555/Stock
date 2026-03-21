@@ -107,16 +107,8 @@ async def calculate_trigger_matrix_auto(
     Args:
         mock: 是否使用模拟数据（用于测试，避免API限流）
     """
-    # #region agent log
-    import json, time
-    log_data = {"sessionId":"fc5bdf","runId":"debug_run","hypothesisId":"API_502","location":"routes.py:96","message":"Matrix API called","data":{"symbol":symbol,"mock":mock},"timestamp":int(time.time()*1000)}
-    with open('/opt/stock-assistant/debug-fc5bdf.log','a') as f: f.write(json.dumps(log_data)+'\n')
-    # #endregion
     try:
-        # #region agent log
-        log_data2 = {"sessionId":"fc5bdf","runId":"debug_run","hypothesisId":"API_502","location":"routes.py:112","message":"Fetching seed data","data":{"symbol":symbol},"timestamp":int(time.time()*1000)}
-        with open('/opt/stock-assistant/debug-fc5bdf.log','a') as f: f.write(json.dumps(log_data2)+'\n')
-        # #endregion
+        print(f"[DEBUG] Matrix API called for {symbol}, mock={mock}")
         # 获取指标种子数据（支持模拟数据模式）
         seed_data = await data_service.calculate_indicator_seed(symbol, use_mock=mock)
 
@@ -158,10 +150,6 @@ async def calculate_trigger_matrix_auto(
             wr_state=seed_data.wr,
             cci_state=seed_data.cci
         )
-        # #region agent log
-        log_data4 = {"sessionId":"fc5bdf","runId":"debug_run","hypothesisId":"API_502","location":"routes.py:160","message":"Matrix calculated","data":{},"timestamp":int(time.time()*1000)}
-        with open('/opt/stock-assistant/debug-fc5bdf.log','a') as f: f.write(json.dumps(log_data4)+'\n')
-        # #endregion
 
         # 获取股票名称
         stock_info = simple_data_service.get_stock_by_symbol(symbol)
@@ -171,20 +159,15 @@ async def calculate_trigger_matrix_auto(
         result = matrix.to_dict()
         result["name"] = stock_name
         result["symbol"] = symbol
-        # #region agent log
-        log_data5 = {"sessionId":"fc5bdf","runId":"debug_run","hypothesisId":"API_502","location":"routes.py:170","message":"Returning result","data":{"symbol":symbol},"timestamp":int(time.time()*1000)}
-        with open('/opt/stock-assistant/debug-fc5bdf.log','a') as f: f.write(json.dumps(log_data5)+'\n')
-        # #endregion
         result["current_price"] = current_price
 
+        print(f"[DEBUG] Matrix API success for {symbol}")
         return result
 
     except Exception as e:
-        # #region agent log
-        import json, time, traceback
-        log_data_err = {"sessionId":"fc5bdf","runId":"debug_run","hypothesisId":"API_502","location":"routes.py:183","message":"Matrix API error","data":{"error":str(e),"traceback":traceback.format_exc()},"timestamp":int(time.time()*1000)}
-        with open('/opt/stock-assistant/debug-fc5bdf.log','a') as f: f.write(json.dumps(log_data_err)+'\n')
-        # #endregion
+        import traceback
+        print(f"[ERROR] Matrix API failed for {symbol}: {str(e)}")
+        print(traceback.format_exc())
         raise HTTPException(status_code=500, detail=f"自动计算失败: {str(e)}")
 
 
@@ -323,7 +306,9 @@ async def get_historical_data(
 async def get_current_price(symbol: str):
     """获取当前价格"""
     try:
+        print(f"[DEBUG] Getting current price for {symbol}")
         price = await data_service.get_current_price(symbol)
+        print(f"[DEBUG] Got price for {symbol}: {price}")
 
         # 获取股票名称
         stock_info = simple_data_service.get_stock_by_symbol(symbol)
@@ -336,6 +321,9 @@ async def get_current_price(symbol: str):
             "timestamp": "now"
         }
     except Exception as e:
+        import traceback
+        print(f"[ERROR] get_current_price failed for {symbol}: {str(e)}")
+        print(traceback.format_exc())
         raise HTTPException(status_code=500, detail=f"获取当前价格失败: {str(e)}")
 
 
