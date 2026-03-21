@@ -539,7 +539,7 @@ Page({
     // 股价站上MA5
     if (buyConditions.priceAboveMA5) {
       const ma = matrixData.ma;
-      if (ma && ma.ma_short && price >= ma.ma_short * 0.99) { // 允许1%误差
+      if (ma && ma.ma_short && price >= ma.ma_short) { // 严格判断：当前价必须 >= MA5
         conditions.push({ name: '站上MA5', satisfied: true });
       } else {
         const ma5 = ma ? ma.ma_short?.toFixed(2) : '--';
@@ -630,7 +630,7 @@ Page({
       // 跌破MA5
       if (stopConditions.priceBelowMA5) {
         const ma = matrixData.ma;
-        if (ma && ma.ma_short && price < ma.ma_short * 0.99) { // 允许1%误差
+        if (ma && ma.ma_short && price < ma.ma_short) { // 严格判断
           triggered.push({ name: '跌破MA5', severity: 'high' });
         }
       }
@@ -940,7 +940,7 @@ Page({
         distance_pct: ((targetPrice - currentPrice) / currentPrice * 100)
       });
     }
-    if (buyConditions.priceAboveMA5 && matrixData.ma && currentPrice < matrixData.ma.ma_short * 0.99) {
+    if (buyConditions.priceAboveMA5 && matrixData.ma && currentPrice < matrixData.ma.ma_short) {
       const targetPrice = matrixData.ma.ma_short;
       criticalPrices.push({
         condition: '站上MA5',
@@ -949,7 +949,7 @@ Page({
         distance_pct: ((targetPrice - currentPrice) / currentPrice * 100)
       });
     }
-    if (buyConditions.priceAboveMA10 && matrixData.ma && currentPrice < matrixData.ma.ma_long * 0.99) {
+    if (buyConditions.priceAboveMA10 && matrixData.ma && currentPrice < matrixData.ma.ma_long) {
       const targetPrice = matrixData.ma.ma_long;
       criticalPrices.push({
         condition: '站上MA10',
@@ -1026,7 +1026,7 @@ Page({
     // 股价站上MA5
     if (buyConditions.priceAboveMA5) {
       const ma = matrixData.ma;
-      if (ma && ma.ma_short && currentPrice >= ma.ma_short * 0.99) {
+      if (ma && ma.ma_short && currentPrice >= ma.ma_short) { // 严格判断
         conditions.push({ name: '站上MA5', satisfied: true });
       } else {
         const distance = ma && ma.ma_short ? ((ma.ma_short - currentPrice) / currentPrice * 100).toFixed(1) : '--';
@@ -1037,7 +1037,7 @@ Page({
     // 股价站上MA10
     if (buyConditions.priceAboveMA10) {
       const ma = matrixData.ma;
-      if (ma && ma.ma_long && currentPrice >= ma.ma_long * 0.99) {
+      if (ma && ma.ma_long && currentPrice >= ma.ma_long) { // 严格判断
         conditions.push({ name: '站上MA10', satisfied: true });
       } else {
         const distance = ma && ma.ma_long ? ((ma.ma_long - currentPrice) / currentPrice * 100).toFixed(1) : '--';
@@ -1105,7 +1105,7 @@ Page({
       // 跌破MA5
       if (stopConditions.priceBelowMA5) {
         const ma = matrixData.ma;
-        if (ma && ma.ma_short && currentPrice < ma.ma_short * 0.99) {
+        if (ma && ma.ma_short && currentPrice < ma.ma_short) { // 严格判断
           triggered.push({ name: '跌破MA5', severity: 'high' });
         }
       }
@@ -1113,7 +1113,7 @@ Page({
       // 跌破MA10
       if (stopConditions.priceBelowMA20) {
         const ma = matrixData.ma;
-        if (ma && ma.ma_long && currentPrice < ma.ma_long * 0.99) {
+        if (ma && ma.ma_long && currentPrice < ma.ma_long) { // 严格判断
           triggered.push({ name: '跌破MA10', severity: 'medium' });
         }
       }

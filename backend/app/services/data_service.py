@@ -836,15 +836,39 @@ class DataService:
             close=df['Close'].iloc[last_idx]
         )
         
-        # 构建 MA 状态
-        # 需要前 N-1 个价格
+        # 构建 MA 状态 - 基于前4日收盘价 + 今日实时价计算
+        # MA5 = (前4日收盘价 + 今日实时价) / 5
         prices = df['Close'].tolist()
+        
+        # 获取前4个交易日收盘价（不包括今日/最新）
+        # df 是按日期升序排列的，最后一个是今日/最新
+        if len(prices) >= 5:
+            prev_4_closes = prices[-5:-1]  # 取倒数第5到倒数第2（共4个）
+            prev_9_closes = prices[-10:-1] if len(prices) >= 10 else prices[-(len(prices)):-1]
+        else:
+            # 数据不足，使用所有历史数据（除了最新）
+            prev_4_closes = prices[:-1] if len(prices) > 1 else prices
+            prev_9_closes = prices[:-1] if len(prices) > 1 else prices
+        
+        # 获取今日实时价格（而不是用历史数据的最后一根收盘价）
+        try:
+            # 尝试使用Tushare获取实时价格
+            if self._tushare_pro:
+                current_price = self._fetch_tushare_current_price(symbol)
+                print(f"[INFO] 使用实时价格计算MA5: {current_price}")
+            else:
+                current_price = df['Close'].iloc[-1]
+                print(f"[INFO] 使用历史收盘价计算MA5: {current_price}")
+        except Exception as e:
+            print(f"[WARN] 获取实时价格失败，使用历史收盘价: {e}")
+            current_price = df['Close'].iloc[-1]
+        
         ma_state = MAState(
-            prices_short=prices[-6:-2],  # 5日均线需要前4个
-            prices_long=prices[-11:-2],  # 10日均线需要前9个
+            prices_short=prev_4_closes,   # 前4日收盘价
+            prices_long=prev_9_closes,    # 前9日收盘价
             short_period=5,
             long_period=10,
-            current_price=df['Close'].iloc[-1]  # 今日最新价格（或昨收）
+            current_price=current_price   # 今日实时价
         )
         
         # 构建 KDJ 状态

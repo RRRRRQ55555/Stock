@@ -199,7 +199,7 @@ class IndicatorEngine:
         macd_slow: int = 26,
         macd_signal: int = 9,
         ma_short: int = 5,
-        ma_long: int = 20,
+        ma_long: int = 10,
         kdj_period: int = 9,
         rsi_period: int = 14,
         boll_period: int = 20,
@@ -598,7 +598,7 @@ class IndicatorEngine:
 
         # 站上MA5条件
         if conditions.get("priceAboveMA5"):
-            if ma_state.current_price < ma_short_current * 0.99:
+            if ma_state.current_price < ma_short_current:  # 严格判断：当前价必须 >= MA5
                 target = ma_short_current
                 critical_prices.append({
                     "condition": "站上MA5",
@@ -610,7 +610,7 @@ class IndicatorEngine:
 
         # 站上MA10条件
         if conditions.get("priceAboveMA10"):
-            if ma_state.current_price < ma_long_current * 0.99:
+            if ma_state.current_price < ma_long_current:  # 严格判断：当前价必须 >= MA10
                 target = ma_long_current
                 critical_prices.append({
                     "condition": "站上MA10",
@@ -696,12 +696,12 @@ class IndicatorEngine:
 
         # 跌破MA5
         if conditions.get("priceBelowMA5"):
-            if ma_state.current_price < ma_short_current * 0.99:
+            if ma_state.current_price < ma_short_current:  # 严格判断
                 triggered_conditions.append("跌破MA5")
 
         # 跌破MA10
         if conditions.get("priceBelowMA20"):
-            if ma_state.current_price < ma_long_current * 0.99:
+            if ma_state.current_price < ma_long_current:  # 严格判断
                 triggered_conditions.append("跌破MA10")
 
         # 计算止损线（取最高的一条）
