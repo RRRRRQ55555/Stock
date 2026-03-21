@@ -132,11 +132,6 @@ async def calculate_trigger_matrix_auto(
         seed_data.wr.current_price = current_price
         seed_data.cci.current_price = current_price
 
-        # #region agent log
-        import json, time
-        log_data3 = {"sessionId":"fc5bdf","runId":"debug_run","hypothesisId":"API_502","location":"routes.py:145","message":"Calculating matrix","data":{"current_price":current_price},"timestamp":int(time.time()*1000)}
-        with open('/opt/stock-assistant/debug-fc5bdf.log','a') as f: f.write(json.dumps(log_data3)+'\n')
-        # #endregion
         # 计算触发矩阵（包含所有指标）
         engine = IndicatorEngine()
         matrix = engine.calculate_trigger_matrix(
@@ -736,32 +731,12 @@ async def get_indicator_patterns():
     - 均线形态：多头排列、空头排列、金叉、死叉等
     - KDJ形态：金叉、死叉、超卖、超买等
     """
-    # region agent log: Entry point - hypothesis A/D
-    import json, time, os
-    log_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'debug-612b9c.log')
     try:
-        with open(log_path, 'a', encoding='utf-8') as f:
-            f.write(json.dumps({'sessionId':'612b9c','id':'api_entry','timestamp':int(time.time()*1000),'location':'routes.py:625','message':'API /indicator-patterns called','data':{'log_path':log_path},'runId':'debug1','hypothesisId':'A'}, ensure_ascii=False)+'\n')
-    except Exception as log_err:
-        print(f"[DEBUG] 无法写入日志: {log_err}")
-    # endregion
-    
-    try:
-        # region agent log: Before import - hypothesis D
-        with open('debug-612b9c.log', 'a', encoding='utf-8') as f:
-            f.write(json.dumps({'sessionId':'612b9c','id':'before_import','timestamp':int(time.time()*1000),'location':'routes.py:636','message':'About to import indicator_patterns','data':{},'runId':'debug1','hypothesisId':'D'}, ensure_ascii=False)+'\n')
-        # endregion
-        
         from ..core.indicator_patterns import (
             MACD_PATTERNS, MA_PATTERNS, KDJ_PATTERNS,
             RSI_PATTERNS, BOLL_PATTERNS, COMBO_PATTERNS,
             CATEGORY_NAMES
         )
-        
-        # region agent log: After import success - hypothesis D
-        with open('debug-612b9c.log', 'a', encoding='utf-8') as f:
-            f.write(json.dumps({'sessionId':'612b9c','id':'import_success','timestamp':int(time.time()*1000),'location':'routes.py:644','message':'Import successful','data':{'macd_count':len(MACD_PATTERNS)},'runId':'debug1','hypothesisId':'D'}, ensure_ascii=False)+'\n')
-        # endregion
         
         def pattern_to_dict(p):
             return {
@@ -784,22 +759,11 @@ async def get_indicator_patterns():
             "combo": [pattern_to_dict(p) for p in COMBO_PATTERNS],
         }
         
-        # region agent log: Success - hypothesis A/C
-        with open('debug-612b9c.log', 'a', encoding='utf-8') as f:
-            f.write(json.dumps({'sessionId':'612b9c','id':'success_return','timestamp':int(time.time()*1000),'location':'routes.py:675','message':'Returning success','data':{'macd':len(result['macd']),'ma':len(result['ma']),'kdj':len(result['kdj'])},'runId':'debug1','hypothesisId':'A'}, ensure_ascii=False)+'\n')
-        # endregion
-        
         print(f"[OK] 返回 {len(result['macd'])} 个MACD形态, {len(result['ma'])} 个MA形态")
         return result
         
     except Exception as e:
-        # region agent log: Exception caught - hypothesis C
         import traceback
-        tb = traceback.format_exc()
-        with open('debug-612b9c.log', 'a', encoding='utf-8') as f:
-            f.write(json.dumps({'sessionId':'612b9c','id':'exception','timestamp':int(time.time()*1000),'location':'routes.py:683','message':'Exception caught','data':{'error':str(e),'traceback':tb[:500]},'runId':'debug1','hypothesisId':'C'}, ensure_ascii=False)+'\n')
-        # endregion
-        
         print(f"[ERROR] 获取指标形态失败: {e}")
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"获取指标形态失败: {str(e)}")
