@@ -93,7 +93,11 @@ async def calculate_trigger_matrix(request: TriggerMatrixRequest):
         raise HTTPException(status_code=500, detail=f"计算失败: {str(e)}")
 
 
-@router.post("/matrix/auto/{symbol}", response_model=TriggerMatrixResponse)
+@router.api_route(
+    "/matrix/auto/{symbol}",
+    methods=["GET", "POST"],
+    response_model=TriggerMatrixResponse,
+)
 async def calculate_trigger_matrix_auto(
     symbol: str,
     current_price: Optional[float] = None,
@@ -163,6 +167,12 @@ async def calculate_trigger_matrix_auto(
         import traceback
         print(f"[ERROR] Matrix API failed for {symbol}: {str(e)}")
         print(traceback.format_exc())
+        err = str(e)
+        if "Too Many Requests" in err or "Rate limited" in err:
+            raise HTTPException(
+                status_code=429,
+                detail=f"数据源限流，请稍后再试: {err}",
+            )
         raise HTTPException(status_code=500, detail=f"自动计算失败: {str(e)}")
 
 
@@ -319,7 +329,13 @@ async def get_current_price(symbol: str):
         import traceback
         print(f"[ERROR] get_current_price failed for {symbol}: {str(e)}")
         print(traceback.format_exc())
-        raise HTTPException(status_code=500, detail=f"获取当前价格失败: {str(e)}")
+        err = str(e)
+        if "Too Many Requests" in err or "Rate limited" in err:
+            raise HTTPException(
+                status_code=429,
+                detail=f"数据源限流，请稍后再试: {err}",
+            )
+        raise HTTPException(status_code=500, detail=f"获取当前价格失败: {err}")
 
 
 @router.get("/search")

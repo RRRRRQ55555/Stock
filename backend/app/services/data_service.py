@@ -998,10 +998,15 @@ class DataService:
         
         优先使用 Tushare 获取A股实时数据，Yahoo Finance 作为备选
         """
-        async def _fetch():
-            # 标准化代码
-            normalized_symbol = self._normalize_symbol(symbol)
+        normalized_symbol = self._normalize_symbol(symbol)
+        loop = asyncio.get_event_loop()
+        now = loop.time()
+        cache_ttl = 60.0
+        cached = self._price_cache.get(normalized_symbol)
+        if cached and (now - cached["t"]) < cache_ttl:
+            return cached["price"]
 
+        async def _fetch():
             # 如果是A股且 Tushare 已初始化，优先使用 Tushare
             if self._is_a_stock(normalized_symbol) and self._tushare_pro:
                 try:
@@ -1037,7 +1042,12 @@ class DataService:
             raise ValueError(f"无法获取 {symbol} 的当前价格")
         
         try:
-            return await self._rate_limited_request(symbol, _fetch)
+            price = await self._rate_limited_request(symbol, _fetch)
+            self._price_cache[normalized_symbol] = {
+                "price": price,
+                "t": loop.time(),
+            }
+            return price
         except Exception as e:
             raise ValueError(f"获取当前价格失败: {str(e)}")
     
