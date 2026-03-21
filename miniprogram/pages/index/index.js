@@ -553,7 +553,7 @@ Page({
     // 股价站上MA10
     if (buyConditions.priceAboveMA10) {
       const ma = matrixData.ma;
-      if (ma && ma.ma_long && price >= ma.ma_long * 0.99) { // 允许1%误差
+      if (ma && ma.ma_long && price >= ma.ma_long) { // 严格判断
         conditions.push({ name: '站上MA10', satisfied: true });
       } else {
         const ma10 = ma ? ma.ma_long?.toFixed(2) : '--';
@@ -638,7 +638,7 @@ Page({
       // 跌破MA10
       if (stopConditions.priceBelowMA20) {
         const ma = matrixData.ma;
-        if (ma && ma.ma_long && price < ma.ma_long * 0.99) { // 允许1%误差
+        if (ma && ma.ma_long && price < ma.ma_long) { // 严格判断
           triggered.push({ name: '跌破MA10', severity: 'medium' });
         }
       }

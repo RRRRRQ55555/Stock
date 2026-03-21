@@ -836,15 +836,19 @@ class DataService:
             close=df['Close'].iloc[last_idx]
         )
         
-        # 构建 MA 状态 - 基于前4日收盘价 + 今日实时价计算
+        # 构建 MA 状态 - 基于历史收盘价 + 今日实时价计算
         # MA5 = (前4日收盘价 + 今日实时价) / 5
+        # MA10 = (前9日收盘价 + 今日实时价) / 10
         prices = df['Close'].tolist()
         
-        # 获取前4个交易日收盘价（不包括今日/最新）
+        # 获取前N-1个交易日收盘价（不包括今日/最新）
         # df 是按日期升序排列的，最后一个是今日/最新
-        if len(prices) >= 5:
-            prev_4_closes = prices[-5:-1]  # 取倒数第5到倒数第2（共4个）
-            prev_9_closes = prices[-10:-1] if len(prices) >= 10 else prices[-(len(prices)):-1]
+        if len(prices) >= 10:
+            prev_4_closes = prices[-5:-1]   # 前4日（用于MA5）
+            prev_9_closes = prices[-10:-1]  # 前9日（用于MA10）
+        elif len(prices) >= 5:
+            prev_4_closes = prices[-5:-1]   # 前4日
+            prev_9_closes = prices[:-1]     # 所有历史数据（除了最新）
         else:
             # 数据不足，使用所有历史数据（除了最新）
             prev_4_closes = prices[:-1] if len(prices) > 1 else prices
