@@ -1,10 +1,11 @@
 // 配置常量
 const config = {
-  // API 基础地址 - 使用你的电脑IP地址（请替换为实际IP）
-  API_BASE: 'http://127.0.0.1:8001/api',
+  // API 基础地址 - 生产环境
+  // 注意：小程序正式版要求 HTTPS，开发阶段可临时使用 HTTP
+  API_BASE: 'http://47.110.3.64:8000/api',
 
   // WebSocket 地址
-  WS_URL: 'ws://127.0.0.1:8001/ws',
+  WS_URL: 'ws://47.110.3.64:8000/ws',
   
   // 刷新间隔（毫秒）
   REFRESH_INTERVAL: 30000,  // 矩阵数据刷新间隔
