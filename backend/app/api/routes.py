@@ -237,6 +237,12 @@ async def calculate_strategy_price_range(
         if current_price is None:
             current_price = await data_service.get_current_price(symbol)
 
+        # 更新种子数据中的当前价格（关键！确保使用传入的价格进行判断）
+        seed_data.macd.current_price = current_price
+        seed_data.ma.current_price = current_price
+        seed_data.kdj.current_price = current_price
+        seed_data.rsi.current_price = current_price
+
         # 获取股票名称
         stock_info = simple_data_service.get_stock_by_symbol(symbol)
         stock_name = stock_info["name"] if stock_info else symbol
