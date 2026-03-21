@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-lg shadow-md p-4;
+  }
+  
+  .card-header {
+    @apply text-lg font-semibold mb-3 border-b pb-2;
+  }
+  
+  .price-up {
+    @apply text-market-up font-bold;
+  }
+  
+  .price-down {
+    @apply text-market-down font-bold;
+  }
+  
+  .alert-high {
+    @apply bg-alert-high text-white;
+  }
+  
+  .alert-medium {
+    @apply bg-alert-medium text-gray-900;
+  }
+  
+  .alert-low {
+    @apply bg-alert-low text-white;
+  }
+  
+  .resonance-zone {
+    @apply bg-gradient-to-r from-green-400 via-yellow-400 to-red-400;
+  }
+}

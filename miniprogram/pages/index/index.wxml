@@ -1,0 +1,246 @@
+<!-- 首页 - 股票搜索与策略看板 -->
+<wxs module="fmt">
+  // 格式化数字为固定小数位
+  var toFixed = function(num, digits) {
+    if (num === null || num === undefined) return '--';
+    num = Number(num);
+    if (isNaN(num)) return '--';
+    var multiplier = Math.pow(10, digits || 0);
+    var rounded = Math.round(num * multiplier) / multiplier;
+    var str = rounded.toString();
+    var dotIndex = str.indexOf('.');
+    if (dotIndex === -1 && digits > 0) {
+      str += '.';
+      for (var i = 0; i < digits; i++) {
+        str += '0';
+      }
+    } else if (dotIndex !== -1) {
+      var currentDigits = str.length - dotIndex - 1;
+      while (currentDigits < digits) {
+        str += '0';
+        currentDigits++;
+      }
+    }
+    return str;
+  };
+
+  // 获取绝对值
+  var abs = function(num) {
+    if (num === null || num === undefined) return 0;
+    num = Number(num);
+    if (isNaN(num)) return 0;
+    return num < 0 ? -num : num;
+  };
+
+  module.exports = {
+    toFixed: toFixed,
+    abs: abs
+  };
+</wxs>
+
+<view class="container">
+
+  <!-- 紧凑搜索框 -->
+  <view class="compact-search-bar" wx:if="{{!currentSymbol}}">
+    <view class="search-box">
+      <text class="search-icon-small">🔍</text>
+      <input
+        class="search-input-compact"
+        type="number"
+        placeholder="输入股票代码"
+        value="{{searchQuery}}"
+        bindinput="onSearchInput"
+        bindconfirm="onSearch"
+        confirm-type="search"
+      />
+      <view class="clear-btn-compact {{searchQuery ? 'show' : ''}}" bindtap="clearSearch">✕</view>
+    </view>
+    <button class="search-btn-compact" bindtap="onSearch">搜索</button>
+  </view>
+
+  <!-- 已选股票搜索框 -->
+  <view class="stock-search-bar" wx:if="{{currentSymbol}}">
+    <view class="stock-display">
+      <text class="bar-icon">🔍</text>
+      <text class="bar-symbol">{{currentSymbol}}</text>
+      <text class="bar-divider">|</text>
+      <text class="bar-name">{{currentStockName}}</text>
+    </view>
+    <view class="bar-actions">
+      <view class="clear-btn-compact show" bindtap="clearStock">✕</view>
+    </view>
+  </view>
+
+  <!-- 搜索建议/历史/热门 -->
+  <view class="search-dropdown" wx:if="{{!currentSymbol}}">
+    <!-- 搜索建议 -->
+    <view class="dropdown-section" wx:if="{{searchSuggestions.length > 0}}">
+      <view
+        class="dropdown-item"
+        wx:for="{{searchSuggestions}}"
+        wx:key="symbol"
+        bindtap="onSelectStock"
+        data-symbol="{{item.symbol}}"
+        data-name="{{item.name}}"
+      >
+        <text class="item-symbol">{{item.symbol}}</text>
+        <text class="item-name">{{item.name}}</text>
+      </view>
+    </view>
+
+    <!-- 搜索历史 -->
+    <view class="dropdown-section" wx:if="{{searchHistory.length > 0 && !searchQuery && searchSuggestions.length === 0}}">
+      <view class="section-header-compact">
+        <text class="section-title-compact">最近搜索</text>
+        <text class="clear-link" bindtap="clearSearchHistory">清空</text>
+      </view>
+      <view class="history-chips">
+        <view
+          class="history-chip"
+          wx:for="{{searchHistory}}"
+          wx:key="symbol"
+          bindtap="onSelectStock"
+          data-symbol="{{item.symbol}}"
+          data-name="{{item.name}}"
+        >
+          {{item.name}}
+        </view>
+      </view>
+    </view>
+
+    <!-- 热门股票 -->
+    <view class="dropdown-section" wx:if="{{!searchQuery && searchHistory.length === 0 && searchSuggestions.length === 0}}">
+      <text class="section-title-compact">热门股票</text>
+      <view class="hot-chips">
+        <view
+          class="hot-chip"
+          wx:for="{{hotStocks}}"
+          wx:key="symbol"
+          bindtap="onSelectStock"
+          data-symbol="{{item.symbol}}"
+          data-name="{{item.name}}"
+        >
+          {{item.name}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 股票信息行 -->
+  <view class="stock-info-row" wx:if="{{currentSymbol}}">
+    <view class="info-left">
+      <view class="info-code-name">
+        <text class="info-symbol">{{currentSymbol}}</text>
+        <text class="info-name">{{currentStockName}}</text>
+      </view>
+      <view class="info-price-wrap" wx:if="{{currentPrice && currentPrice.price}}">
+        <text class="info-price {{currentPrice.change > 0 ? 'up' : (currentPrice.change < 0 ? 'down' : '')}}">
+          {{fmt.toFixed(currentPrice.price, 2)}}
+        </text>
+        <text class="info-change {{currentPrice.change > 0 ? 'up' : (currentPrice.change < 0 ? 'down' : '')}}">
+          {{currentPrice.change > 0 ? '↑' : (currentPrice.change < 0 ? '↓' : '→')}}{{fmt.toFixed(currentPrice.changePercent, 1)}}%
+        </text>
+      </view>
+      <view class="info-price-wrap" wx:else>
+        <text class="info-price" style="color:#999;">--</text>
+      </view>
+    </view>
+    <view class="info-right">
+      <view class="alert-btn" bindtap="setAlert">
+        <text class="alert-icon">🔔</text>
+        <text class="alert-text">设预警</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-row" wx:if="{{loading}}">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 策略看板 -->
+  <view class="strategy-dashboard" wx:if="{{currentSymbol && matrixData}}">
+    <view class="dashboard-header" bindtap="goToStrategySettings">
+      <text class="dashboard-title">智能策略</text>
+      <text class="dashboard-subtitle">点击修改设置 →</text>
+    </view>
+
+    <!-- 买入建议 -->
+    <view class="strategy-row">
+      <view class="row-header">
+        <text class="row-icon">📈</text>
+        <text class="row-name">买入建议</text>
+        <view class="row-status {{buyMatched === true ? 'status-safe' : (buyMatched === false ? 'status-far' : 'status-neutral')}}">
+          {{buyMatched === true ? '可买' : (buyMatched === false ? '观望' : '未设置')}}
+        </view>
+      </view>
+      <!-- 触发价格信息 -->
+      <view wx:if="{{strategyRange && strategyRange.buy}}" style="padding:12rpx 0;">
+        <view wx:if="{{!strategyRange.buy.current_satisfied && strategyRange.buy.critical_prices.length > 0}}">
+          <view style="font-size:22rpx;color:#666;margin-bottom:6rpx;">
+            <text style="color:#ff9800;font-weight:500;">触发买入需满足:</text>
+          </view>
+          <view wx:for="{{strategyRange.buy.critical_prices}}" wx:key="condition" style="font-size:22rpx;color:#666;margin-bottom:4rpx;padding-left:8rpx;">
+            • {{item.condition}}: 股价{{item.direction === 'above' ? '涨至' : '跌至'}}¥{{fmt.toFixed(item.target_price, 2)}}
+            <text style="color:{{item.distance_pct > 0 ? '#ff4d4f' : '#52c41a'}};"> ({{item.distance_pct > 0 ? '需涨' : '需跌'}}{{fmt.toFixed(fmt.abs(item.distance_pct), 1)}}%)</text>
+          </view>
+        </view>
+        <view wx:elif="{{strategyRange.buy.current_satisfied}}" style="font-size:24rpx;color:#52c41a;">
+          ✓ 当前价格已满足所有买入条件
+        </view>
+      </view>
+      <view wx:elif="{{!strategyRange}}" style="padding:12rpx 0;font-size:24rpx;color:#999;">
+        点击右上角设置买入策略
+      </view>
+    </view>
+
+    <!-- 止损建议 -->
+    <view class="strategy-row">
+      <view class="row-header">
+        <text class="row-icon">🛡️</text>
+        <text class="row-name">止损建议</text>
+        <view class="row-status {{stopLossTriggered ? 'status-danger' : 'status-safe'}}">
+          {{stopLossTriggered ? '止损' : '持有'}}
+        </view>
+      </view>
+      <!-- 止损触发价格 -->
+      <view wx:if="{{strategyRange && strategyRange.stop}}" style="padding:12rpx 0;">
+        <view style="font-size:22rpx;color:#666;margin-bottom:6rpx;">
+          <text style="color:#ff4d4f;font-weight:500;">触发止损线: ¥{{strategyRange.stop.stop_price}}</text>
+          <text wx:if="{{strategyRange.stop.distance_to_stop > 0}}" style="color:#52c41a;margin-left:16rpx;">
+            (距止损线 {{strategyRange.stop.distance_to_stop}}%)
+          </text>
+        </view>
+        <view wx:if="{{strategyRange.stop.triggered_conditions.length > 0}}" style="font-size:22rpx;color:#ff4d4f;">
+          <view wx:for="{{strategyRange.stop.triggered_conditions}}" wx:key="*this">
+            ⚠ {{item}} 已触发，建议立即止损
+          </view>
+        </view>
+        <view wx:else style="font-size:22rpx;color:#999;">
+          当前未触发止损条件，建议持有
+        </view>
+      </view>
+      <view wx:elif="{{!strategyRange}}" style="padding:12rpx 0;font-size:24rpx;color:#999;">
+        点击右上角设置止损策略
+      </view>
+    </view>
+  </view>
+
+  <!-- 共振预警 -->
+  <view class="resonance-alert" wx:if="{{currentSymbol && resonanceAlert && !loading}}">
+    <view class="alert-icon-wrap">
+      <text class="alert-big-icon">💡</text>
+    </view>
+    <view class="alert-content">
+      <text class="alert-title">共振预警</text>
+      <text class="alert-desc">{{resonanceAlert}}</text>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-tip" wx:if="{{!currentSymbol && !loading}}">
+    <text class="tip-icon">📊</text>
+    <text class="tip-text">搜索股票查看策略分析</text>
+  </view>
+
+</view>

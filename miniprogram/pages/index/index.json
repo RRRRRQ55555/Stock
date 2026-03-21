@@ -1,0 +1,6 @@
+{
+  "usingComponents": {},
+  "navigationBarTitleText": "技术指标预判",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#f5f5f5"
+}

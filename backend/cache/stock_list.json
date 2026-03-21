@@ -1,0 +1,89 @@
+{
+  "timestamp": "2026-03-20T20:30:05.087064",
+  "stocks": [
+    {
+      "symbol": "AAPL",
+      "name": "Apple Inc.",
+      "exchange": "NASDAQ",
+      "type": "美股"
+    },
+    {
+      "symbol": "MSFT",
+      "name": "Microsoft Corp.",
+      "exchange": "NASDAQ",
+      "type": "美股"
+    },
+    {
+      "symbol": "GOOGL",
+      "name": "Alphabet Inc.",
+      "exchange": "NASDAQ",
+      "type": "美股"
+    },
+    {
+      "symbol": "AMZN",
+      "name": "Amazon.com Inc.",
+      "exchange": "NASDAQ",
+      "type": "美股"
+    },
+    {
+      "symbol": "TSLA",
+      "name": "Tesla Inc.",
+      "exchange": "NASDAQ",
+      "type": "美股"
+    },
+    {
+      "symbol": "META",
+      "name": "Meta Platforms Inc.",
+      "exchange": "NASDAQ",
+      "type": "美股"
+    },
+    {
+      "symbol": "NVDA",
+      "name": "NVIDIA Corp.",
+      "exchange": "NASDAQ",
+      "type": "美股"
+    },
+    {
+      "symbol": "NFLX",
+      "name": "Netflix Inc.",
+      "exchange": "NASDAQ",
+      "type": "美股"
+    },
+    {
+      "symbol": "BABA",
+      "name": "Alibaba Group",
+      "exchange": "NYSE",
+      "type": "美股"
+    },
+    {
+      "symbol": "JD",
+      "name": "JD.com Inc.",
+      "exchange": "NASDAQ",
+      "type": "美股"
+    },
+    {
+      "symbol": "0700.HK",
+      "name": "腾讯控股",
+      "exchange": "HKEX",
+      "type": "港股"
+    },
+    {
+      "symbol": "3690.HK",
+      "name": "美团",
+      "exchange": "HKEX",
+      "type": "港股"
+    },
+    {
+      "symbol": "9988.HK",
+      "name": "阿里巴巴-SW",
+      "exchange": "HKEX",
+      "type": "港股"
+    },
+    {
+      "symbol": "0005.HK",
+      "name": "汇丰控股",
+      "exchange": "HKEX",
+      "type": "港股"
+    }
+  ]
+}
