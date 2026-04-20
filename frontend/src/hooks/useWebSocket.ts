@@ -27,7 +27,7 @@ export const useWebSocket = (options: UseWebSocketOptions = {}) => {
   
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectAttemptsRef = useRef(0);
-  const reconnectTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const subscribedSymbolsRef = useRef<string[]>([]);
   
   const {

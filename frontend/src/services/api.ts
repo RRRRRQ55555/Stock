@@ -11,7 +11,6 @@ import {
   StressTestRequest,
   StressTestResponse,
   StockSymbol,
-  HistoricalDataResponse,
   ConditionFilterRequest,
   ConditionFilterResponse,
   GetScenariosResponse,
@@ -86,8 +85,8 @@ export const getHistoricalData = async (
   symbol: string,
   period: string = '1y',
   interval: string = '1d'
-): Promise<HistoricalDataResponse> => {
-  const response = await api.get<HistoricalDataResponse>(
+): Promise<any> => {
+  const response = await api.get<any>(
     `/historical/${symbol}`,
     { params: { period, interval } }
   );

@@ -339,11 +339,11 @@ async def get_current_price(symbol: str):
 
 
 @router.get("/search")
-async def search_symbols(q: str = Query(..., min_length=1, max_length=20)):
+async def search_symbols(query: str = Query(..., min_length=1, max_length=20)):
     """搜索股票代码（纯本地搜索）"""
     from ..services.simple_data_service import simple_data_service
     
-    query_str = str(q).strip() if q else ""
+    query_str = str(query).strip() if query else ""
     if not query_str:
         return []
     

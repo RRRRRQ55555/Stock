@@ -157,24 +157,25 @@ export const StockSelector: React.FC<StockSelectorProps> = ({
     return () => clearTimeout(timer);
   }, [query, debouncedSearch]);
   
-  // 获取当前价格
-  useEffect(() => {
-    if (!selectedSymbol) return;
-    
-    const fetchPrice = async () => {
-      try {
-        const data = await getCurrentPrice(selectedSymbol);
-        setCurrentPrice(data.price);
-      } catch (e) {
-        console.error('获取价格失败:', e);
-      }
-    };
-    
-    fetchPrice();
-    const interval = setInterval(fetchPrice, 5000); // 每5秒更新
-    
-    return () => clearInterval(interval);
-  }, [selectedSymbol]);
+  // 获取当前价格 - 仅在选择时获取一次，不定时更新
+  // 因为 API 限流问题，暂时禁用定时更新
+  // useEffect(() => {
+  //   if (!selectedSymbol) return;
+  //   
+  //   const fetchPrice = async () => {
+  //     try {
+  //       const data = await getCurrentPrice(selectedSymbol);
+  //       setCurrentPrice(data.price);
+  //     } catch (e) {
+  //       console.error('获取价格失败:', e);
+  //     }
+  //   };
+  //   
+  //   fetchPrice();
+  //   const interval = setInterval(fetchPrice, 5000); // 每5秒更新
+  //   
+  //   return () => clearInterval(interval);
+  // }, [selectedSymbol]);
   
   const handleSelect = (symbol: string, stockInfo?: StockSymbol) => {
     setQuery('');
