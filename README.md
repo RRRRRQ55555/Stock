@@ -33,7 +33,111 @@
 - **平台**: 微信小程序
 - **样式**: WXSS (优化后的专业金融设计系统)
 
+## 快速开始 - 本地运行
+
+### 系统要求
+
+- **Node.js** v18 或更高版本
+- **Python** 3.8 或更高版本  
+- **Git** 最新版本
+
+### 📋 运行步骤（重要：按顺序执行）
+
+#### 第 1 步：克隆项目
+
+```bash
+git clone https://github.com/RRRRRQ55555/Stock.git
+cd Stock/stock_assistant
+```
+
+#### 第 2 步：安装依赖
+
+**安装前端依赖：**
+```bash
+cd frontend
+npm install
+cd ..
+```
+
+**安装后端依赖：**
+```bash
+cd backend
+pip install -r requirements.txt
+cd ..
+```
+
+#### 第 3 步：启动后端（第一个终端）
+
+⚠️ **重要：先启动后端！**
+
+```bash
+cd backend
+python app/main.py
+```
+
+**预期输出：**
+```
+INFO:     Uvicorn running on http://127.0.0.1:8000
+INFO:     Application startup complete
+```
+
+✅ 后端运行在 `http://localhost:8000`
+
+#### 第 4 步：启动前端（第二个终端）
+
+⚠️ **只有在后端成功启动后，才启动前端！**
+
+打开**新的**命令行窗口，然后运行：
+
+```bash
+cd frontend
+npm run dev
+```
+
+**预期输出：**
+```
+VITE v5.0.0  ready in 123 ms
+
+➜  Local:   http://localhost:3000/
+```
+
+✅ 前端运行在 `http://localhost:3000`
+
+#### 第 5 步：打开应用
+
+在浏览器中打开：
+```
+http://localhost:3000
+```
+
+🎉 应用已启动！现在可以开始使用所有功能。
+
+### ⚠️ 执行顺序提醒
+
+```
+【终端 1】启动后端 (8000 端口)
+     ↓
+ [等待 "Application startup complete" 消息]
+     ↓
+【终端 2】启动前端 (3000 端口)
+     ↓
+【浏览器】打开 http://localhost:3000
+     ↓
+✅ 应用可用
+```
+
+**如果顺序错误，前端无法连接后端！**
+
+---
+
 ## 部署指南
+
+### 在线应用
+
+**无需安装，直接使用：**
+```
+https://stocktwo.vercel.app
+```
 
 ### 后端部署
 
@@ -60,26 +164,45 @@ docker-compose up -d
 3. 点击「上传」提交审核
 4. 审核通过后发布
 
+---
+
 ## 项目结构
 
 ```
 stock_assistant/
-├── backend/              # 后端服务
+├── frontend/             # React 前端应用
+│   ├── src/
+│   │   ├── components/   # React 组件
+│   │   ├── services/     # API 服务
+│   │   ├── hooks/        # 自定义 hooks
+│   │   ├── App.tsx       # 主应用
+│   │   └── main.tsx      # 入口
+│   ├── dist/             # 编译输出
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── vite.config.ts
+├── backend/              # FastAPI 后端服务
 │   ├── app/
 │   │   ├── api/          # API 路由
 │   │   ├── core/         # 核心算法
 │   │   ├── services/     # 业务逻辑
+│   │   ├── models/       # 数据模型
 │   │   └── main.py       # 入口
 │   ├── requirements.txt
 │   └── .env.example
 ├── miniprogram/          # 微信小程序
 │   ├── pages/            # 页面
 │   ├── utils/            # 工具函数
-│   └── app.js
-├── Dockerfile
-├── docker-compose.yml
-└── README.md
+│   ├── app.js
+│   └── app.json
+├── vercel.json           # Vercel 部署配置
+├── QUICK_DEMO_GUIDE.md   # 快速运行指南
+├── README.md             # 本文件
+└── ...其他文件
 ```
+
+---
+
 
 ## 核心算法
 
