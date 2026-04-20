@@ -1,4 +1,7 @@
 {
-  "buildCommand": "cd frontend && npm run build",
-  "outputDirectory": "frontend/dist"
+  "buildCommand": "npm run build --prefix frontend",
+  "outputDirectory": "frontend/dist",
+  "env": {
+    "VITE_API_BASE": "http://localhost:8000"
+  }
 }
